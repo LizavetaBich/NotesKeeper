@@ -6,7 +6,7 @@ namespace NotesKeeper.DataAccess
 {
     public class NotesKeeperContext : DbContext
     {
-        private string _connectionString;
+        private readonly string _connectionString;
 
         public DbSet<Note> Notes { get; set; }
 
@@ -21,7 +21,7 @@ namespace NotesKeeper.DataAccess
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer("");
+            optionsBuilder.UseSqlServer(this._connectionString);
         }
     }
 }

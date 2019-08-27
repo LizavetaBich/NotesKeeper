@@ -4,10 +4,8 @@ using System.Text;
 
 namespace NotesKeeper.DataAccess.Models
 {
-    public class User
+    public class User : BaseItem
     {
-        public Guid Id { get; set; }
-
         public string FirstName { get; set; }
 
         public string LastName { get; set; }

@@ -1,22 +1,20 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using NotesKeeper.DataAccess.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.Extensions.Configuration;
-using NotesKeeper.DataAccess.Models;
 
 namespace NotesKeeper.DataAccess
 {
-    public class MasterDataAccess : IMasterDataAccess
+    public class MasterDataAccess : IRepository
     {
         private NotesKeeperMasterContext _masterContext;
 
-        public void ConnectToMasterDb()
+        public void ConnectToDb()
         {
             // TODO: add dependency injection
             var builder = new ConfigurationBuilder();
@@ -30,45 +28,81 @@ namespace NotesKeeper.DataAccess
             this._masterContext = new NotesKeeperMasterContext(options);
         }
 
-        public ConfiguredTaskAwaitable<EntityEntry<User>> AddUser(User user)
+        public async Task<BaseItem> AddAsync(BaseItem item)
         {
-            if (user == null)
+            if (!(item is User))
             {
                 throw new ArgumentNullException("Argument can't be null.");
             }
-            
-            this.AddConnectionString(user);
 
-            return this._masterContext.Users.AddAsync(user).ConfigureAwait(false);
-        }
-
-        public async Task DeleteUser(Guid id)
-        {
-            var user = await this._masterContext.Users.FindAsync(id).ConfigureAwait(false);
-            this._masterContext.Users.Remove(user);
-        }
-
-        public ConfiguredTaskAwaitable<User> GetUser(Guid id)
-        {
-            return this._masterContext.Users.FindAsync(id).ConfigureAwait(false);
-        }
-
-        public Task<User> GetUser(string email)
-        {
-            return new Task<User>(() =>
+            BaseItem updatedItem;
+            using (var transaction = await this._masterContext.Database.BeginTransactionAsync())
             {
-                return this._masterContext.Users.SingleOrDefault(user => user.Email == email);
-            });
+                var createdItem = await this._masterContext.Users.AddAsync((User)item).ConfigureAwait(false);
+                await this._masterContext.SaveChangesAsync(true);
+
+                this.AddConnectionString(createdItem.Entity);
+
+                updatedItem = this._masterContext.Users.Update(createdItem.Entity).Entity;
+                await this._masterContext.SaveChangesAsync();
+
+                transaction.Commit();
+            }
+            
+
+            return updatedItem;
         }
 
-        public User UpdateUser(User user)
+        public ConfiguredTaskAwaitable<bool> DeleteAsync(BaseItem item)
         {
-            throw new NotImplementedException();
+            if (!(item is User))
+            {
+                throw new ArgumentNullException("Argument can't be null.");
+            }
+
+            return (new Task<bool>(() =>
+            {
+                try
+                {
+                    var user = this._masterContext.Users.Find(item.Id);
+                    user.DeletionDate = DateTime.Now;
+                    user.IsDeleted = true;
+                    this._masterContext.Users.Update(user);
+                    this._masterContext.SaveChanges();
+                }
+                catch
+                {
+                    return false;
+                }
+                
+                return true;
+            })).ConfigureAwait(false);
+        }
+
+        public ConfiguredTaskAwaitable<BaseItem> UpdateAsync(BaseItem item)
+        {
+            if (!(item is User))
+            {
+                throw new ArgumentNullException("Argument can't be null.");
+            }
+
+            return (new Task<BaseItem>(() =>
+            {
+                var updatedItem = this._masterContext.Users.Update((User)item);
+                this._masterContext.SaveChanges();
+                return updatedItem.Entity;
+            })).ConfigureAwait(false);
+        }
+
+        public ConfiguredTaskAwaitable<IEnumerable<BaseItem>> GetAsync(Func<BaseItem,bool> filter)
+        {
+            return (new Task<IEnumerable<BaseItem>>(() => this._masterContext.Users.Where(user => filter(user))))
+                .ConfigureAwait(false);
         }
 
         private void AddConnectionString(User user)
         {
-            user.ConnectionString = $"Server=(localdb)\\mssqllocaldb;Database=User_{user.FirstName.Replace(" ", string.Empty)}{user.LastName.Replace(" ", string.Empty)};Trusted_Connection=True;";
+            user.ConnectionString = $"Server=(localdb)\\mssqllocaldb;Database=User_{user.Id};Trusted_Connection=True;";
         }
     }
 }
