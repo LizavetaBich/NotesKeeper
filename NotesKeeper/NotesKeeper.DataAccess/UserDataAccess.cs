@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using NotesKeeper.DataAccess.Models;
+using NotesKeeper.Common.Models;
 
 namespace NotesKeeper.DataAccess
 {

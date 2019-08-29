@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace NotesKeeper.DataAccess.Models
+namespace NotesKeeper.Common.Models
 {
     public abstract class BaseItem
     {

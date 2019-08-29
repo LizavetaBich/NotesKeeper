@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using NotesKeeper.DataAccess.Models;
+using NotesKeeper.Common.Models;
 
 namespace NotesKeeper.DataAccess
 {

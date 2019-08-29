@@ -4,8 +4,7 @@ using System.Text;
 
 namespace NotesKeeper.BusinessLayer.Interfaces
 {
-    public interface IUserService
+    public interface INoteService
     {
-
     }
 }
