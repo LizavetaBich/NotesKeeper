@@ -12,6 +12,8 @@ namespace NotesKeeper.DataAccess
 
         public DbSet<Tag> Tags { get; set; }
 
+        public DbSet<Group> Groups { get; set; }
+
         public NotesKeeperContext(string connectionString)
         {
             this._connectionString = connectionString;

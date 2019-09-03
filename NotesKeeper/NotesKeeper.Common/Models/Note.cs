@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace NotesKeeper.Common.Models
 {
@@ -14,6 +15,6 @@ namespace NotesKeeper.Common.Models
 
         public DateTime Expired { get; set; }
 
-        public virtual Tag Tag { get; set; }
+        public virtual IList<Tag> Tags { get; set; }
     }
 }

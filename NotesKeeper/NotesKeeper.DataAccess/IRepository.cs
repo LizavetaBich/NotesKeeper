@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,6 @@ namespace NotesKeeper.DataAccess
 
         ConfiguredTaskAwaitable<BaseItem> UpdateAsync(BaseItem item);
 
-        ConfiguredTaskAwaitable<IEnumerable<BaseItem>> GetAsync(Func<BaseItem, bool> filter);
+        IQueryable<BaseItem> GetQueryable<T>();
     }
 }
