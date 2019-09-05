@@ -11,24 +11,19 @@
             <ColumnDefinition Width="0.2*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        
+
         <Grid.RowDefinitions>
+            <RowDefinition />
             <RowDefinition Height="30"/>
-            <RowDefinition/>
         </Grid.RowDefinitions>
-        
-        <Canvas Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="CornflowerBlue">
-            
-        </Canvas>
-        
-        <ListBox Grid.Row="1" Grid.Column="0">
-            <TextBlock FontWeight="Bold">Groups</TextBlock>
+
+        <ListBox Grid.Row="0" Grid.Column="0">
             <ListBoxItem>Default</ListBoxItem>
             <ListBoxItem>Favourites</ListBoxItem>
         </ListBox>
         
-        <WrapPanel Grid.Column="1" Grid.Row="1">
-            <local:EventViewWidget Width="350" Height="260" Margin="10"></local:EventViewWidget>
+        <WrapPanel Grid.Column="1" Grid.RowSpan="2" Grid.Row="0">
+            <local:NoteViewWidget Width="350" Height="240" Margin="10"></local:NoteViewWidget>
         </WrapPanel>
         
     </Grid>

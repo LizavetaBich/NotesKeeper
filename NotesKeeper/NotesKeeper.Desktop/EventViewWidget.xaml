@@ -69,14 +69,18 @@
             <Run FontSize="12" FontWeight="DemiBold">Tags</Run>
         </TextBlock>
 
-        <Button Grid.Row="9" Grid.Column="4" Grid.ColumnSpan="2">+</Button>
+        <Button Grid.Row="9" Grid.Column="4" Grid.ColumnSpan="2" FontSize="9">+</Button>
 
         <TextBlock Grid.Row="3" Grid.RowSpan="12" Grid.Column="8" Grid.ColumnSpan="7" Name="EventDescription">
             <Run FontSize="12" FontWeight="DemiBold">Description</Run>
         </TextBlock>
 
-        <Button Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="2">Edit</Button>
+        <TextBlock Grid.Row="4" Grid.RowSpan="11" Grid.Column="8" Grid.ColumnSpan="7" Name="EventDescriptionContent" TextWrapping="WrapWithOverflow">
+            <Run FontSize="10" FontWeight="ExtraLight">DescriptionContent</Run>
+        </TextBlock>
 
-        <Button Grid.Row="14" Grid.Column="4" Grid.ColumnSpan="2">Delete</Button>
+        <Button Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="2" FontSize="9">Edit</Button>
+
+        <Button Grid.Row="14" Grid.Column="4" Grid.ColumnSpan="2" FontSize="9">Delete</Button>
     </Grid>
 </UserControl>
