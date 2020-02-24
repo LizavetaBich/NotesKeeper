@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotesKeeper.WebApplication"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotesKeeper.Common", "NotesKeeper.Common\NotesKeeper.Common.csproj", "{AA53E284-A8FC-43F9-8670-BA669551E540}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotesKeeper.DataAccess", "NotesKeeper.DataAccess\NotesKeeper.DataAccess.csproj", "{C3E0C7D2-59DF-4342-8A09-0BD182EBA33B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotesKeeper.DataAccess", "NotesKeeper.DataAccess\NotesKeeper.DataAccess.csproj", "{C3E0C7D2-59DF-4342-8A09-0BD182EBA33B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotesKeeper.BusinessLayer", "NotesKeeper.BusinessLayer\NotesKeeper.BusinessLayer.csproj", "{34669CF1-A553-40DB-B0EB-E09AB0FFDB0F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{C3E0C7D2-59DF-4342-8A09-0BD182EBA33B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3E0C7D2-59DF-4342-8A09-0BD182EBA33B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3E0C7D2-59DF-4342-8A09-0BD182EBA33B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34669CF1-A553-40DB-B0EB-E09AB0FFDB0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34669CF1-A553-40DB-B0EB-E09AB0FFDB0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34669CF1-A553-40DB-B0EB-E09AB0FFDB0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34669CF1-A553-40DB-B0EB-E09AB0FFDB0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
