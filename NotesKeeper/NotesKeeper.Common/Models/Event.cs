@@ -16,7 +16,7 @@ namespace NotesKeeper.Common
 
         public string Description { get; set; }
 
-        public IList<Day> Days { get; }
+        public IEnumerable<Day> Days { get; }
 
         public StatusEnum Status { get; set; }
 

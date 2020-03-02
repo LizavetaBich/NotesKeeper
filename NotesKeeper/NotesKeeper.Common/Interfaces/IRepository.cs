@@ -8,7 +8,9 @@ namespace NotesKeeper.DataAccess.Interfaces
     {
         Task<T> Create<T>(T item);
 
-        Task<T> Read<T>(Guid id, Func<bool> filter = null);
+        Task<T> Read<T>(Guid id);
+
+        Task<IEnumerable<T>> ReadAll<T>();
 
         Task Update<T>(T item);
 
@@ -16,7 +18,9 @@ namespace NotesKeeper.DataAccess.Interfaces
 
         Task<IEnumerable<T>> Create<T>(IEnumerable<T> items);
 
-        Task<IEnumerable<T>> Read<T>(IEnumerable<Guid> ids, Func<bool> filter = null);
+        Task<IEnumerable<T>> Read<T>(IEnumerable<Guid> ids);
+
+        Task<IEnumerable<T>> Read<T>(Func<T, bool> filter);
 
         Task Update<T>(IEnumerable<T> items);
 

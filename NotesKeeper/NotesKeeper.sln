@@ -11,7 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotesKeeper.Common", "Notes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotesKeeper.DataAccess", "NotesKeeper.DataAccess\NotesKeeper.DataAccess.csproj", "{C3E0C7D2-59DF-4342-8A09-0BD182EBA33B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotesKeeper.BusinessLayer", "NotesKeeper.BusinessLayer\NotesKeeper.BusinessLayer.csproj", "{34669CF1-A553-40DB-B0EB-E09AB0FFDB0F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotesKeeper.BusinessLayer", "NotesKeeper.BusinessLayer\NotesKeeper.BusinessLayer.csproj", "{34669CF1-A553-40DB-B0EB-E09AB0FFDB0F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E06849F2-EF36-4CFD-8AF8-07C0B28086AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotesKeeper.BusinessLayerTests", "NotesKeeper.BusinessLayerTests\NotesKeeper.BusinessLayerTests.csproj", "{2A7FB114-68CC-4D33-AFA2-6AAD87EBA492}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,9 +43,16 @@ Global
 		{34669CF1-A553-40DB-B0EB-E09AB0FFDB0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34669CF1-A553-40DB-B0EB-E09AB0FFDB0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34669CF1-A553-40DB-B0EB-E09AB0FFDB0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A7FB114-68CC-4D33-AFA2-6AAD87EBA492}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A7FB114-68CC-4D33-AFA2-6AAD87EBA492}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A7FB114-68CC-4D33-AFA2-6AAD87EBA492}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A7FB114-68CC-4D33-AFA2-6AAD87EBA492}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2A7FB114-68CC-4D33-AFA2-6AAD87EBA492} = {E06849F2-EF36-4CFD-8AF8-07C0B28086AD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BF768643-87BE-438D-AF64-51550B21EECC}
