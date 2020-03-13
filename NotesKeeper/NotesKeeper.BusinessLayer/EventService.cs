@@ -18,6 +18,9 @@ namespace NotesKeeper.BusinessLayer
 
         public EventService(ICalendarService calendarService, IRepository repository)
         {
+            Guard.IsNotNull(calendarService);
+            Guard.IsNotNull(repository);
+
             this._calendarService = calendarService;
             this._repository = repository;
             this._dayEqualityComparer = new DayEqualityComparer();
@@ -25,10 +28,7 @@ namespace NotesKeeper.BusinessLayer
 
         public async Task<CustomEvent> CreateEvent(CustomEvent item, FrequencyEnum frequency)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException("");
-            }
+            Guard.IsNotNull(item);
 
             var days = await _calendarService.UpdateDaysWithEvent(item, frequency);
 
@@ -46,10 +46,7 @@ namespace NotesKeeper.BusinessLayer
 
         public Task<IEnumerable<CustomEvent>> GetAllEvents(Day day)
         {
-            if (day == null)
-            {
-                throw new ArgumentNullException("");
-            }
+            Guard.IsNotNull(day);
 
             return this._repository.ReadAll<CustomEvent>();
         }
@@ -61,10 +58,7 @@ namespace NotesKeeper.BusinessLayer
 
         public Task<IEnumerable<CustomEvent>> GetEventsByDay(Day day)
         {
-            if (day == null)
-            {
-                throw new ArgumentNullException("");
-            }
+            Guard.IsNotNull(day);
 
             return this._repository.Read<CustomEvent>(x => x.Days.Any(d => this._dayEqualityComparer.Equals(d, day)));
         }
@@ -76,12 +70,9 @@ namespace NotesKeeper.BusinessLayer
 
         public Task<CustomEvent> UpdateEvent(CustomEvent item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException("");
-            }
+            Guard.IsNotNull(item);
 
-
+            return this._repository.Update<CustomEvent>(item);
         }
     }
 }

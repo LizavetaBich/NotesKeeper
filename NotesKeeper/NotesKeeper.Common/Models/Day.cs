@@ -31,12 +31,12 @@ namespace NotesKeeper.Common
                 && other.Year == this.Year;
         }
 
-        public static explicit operator Day(DateTime dateTime)
+        public static implicit operator Day(DateTime dateTime)
         {
             return new Day(dateTime);
         }
 
-        public static implicit operator DateTime(Day day)
+        public static explicit operator DateTime(Day day)
         {
             if (day == null)
             {

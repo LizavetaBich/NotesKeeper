@@ -12,7 +12,7 @@ namespace NotesKeeper.DataAccess.Interfaces
 
         Task<IEnumerable<T>> ReadAll<T>();
 
-        Task Update<T>(T item);
+        Task<T> Update<T>(T item);
 
         Task Delete<T>(Guid id);
 
@@ -22,7 +22,7 @@ namespace NotesKeeper.DataAccess.Interfaces
 
         Task<IEnumerable<T>> Read<T>(Func<T, bool> filter);
 
-        Task Update<T>(IEnumerable<T> items);
+        Task<IEnumerable<T>> Update<T>(IEnumerable<T> items);
 
         Task Delete<T>(IEnumerable<Guid> ids);
     }
