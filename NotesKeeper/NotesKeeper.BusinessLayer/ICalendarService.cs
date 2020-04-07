@@ -9,8 +9,6 @@ namespace NotesKeeper.BusinessLayer
 {
     public interface ICalendarService
     {
-        Task UpdateDays(IEnumerable<Day> days);
-
-        Task<IEnumerable<Day>> UpdateDaysWithEvent(CustomEvent item, FrequencyEnum frequency);
+        Task<IEnumerable<DateTime>> GetDays(DateTime startDay, DateTime endDay, FrequencyEnum frequency);
     }
 }

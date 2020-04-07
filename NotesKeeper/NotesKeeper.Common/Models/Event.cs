@@ -5,21 +5,27 @@ using System.Text;
 
 namespace NotesKeeper.Common
 {
-    public class CustomEvent
+    public class CustomEvent: BaseModel
     {
-        public CustomEvent()
+        public CustomEvent(Guid id) : base(id)
         {
-            Days = new List<Day>();
+            Days = new List<DateTime>();
         }
 
         public string Name { get; set; }
 
         public string Description { get; set; }
 
-        public IEnumerable<Day> Days { get; }
-
         public StatusEnum Status { get; set; }
 
+        public FrequencyEnum Frequency { get; set; }
+
+        public DateTime EventStartDay { get; set; }
+
+        public DateTime? EventLastDay { get; set; }
+
         public string Place { get; set; }
+
+        public ICollection<DateTime> Days { get; }
     }
 }

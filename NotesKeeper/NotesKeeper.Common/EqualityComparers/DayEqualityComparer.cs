@@ -4,21 +4,21 @@ using System.Text;
 
 namespace NotesKeeper.Common.EqualityComparers
 {
-    public class DayEqualityComparer : IEqualityComparer<Day>
+    public class DayEqualityComparer : IEqualityComparer<DateTime>
     {
-        public bool Equals(Day x, Day y)
+        public bool Equals(DateTime x, DateTime y)
         {
-            return x == y;
+            return x.Date == y.Date;
         }
 
-        public int GetHashCode(Day obj)
+        public int GetHashCode(DateTime obj)
         {
             if (obj == null)
             {
                 return int.MinValue;
             }
 
-            return (obj.DayNumber * obj.Month) + obj.Year;
+            return (obj.Day * obj.Month) + obj.Year;
         }
     }
 }

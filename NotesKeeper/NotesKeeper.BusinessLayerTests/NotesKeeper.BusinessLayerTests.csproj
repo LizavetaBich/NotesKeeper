@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NotesKeeper.BusinessLayer\NotesKeeper.BusinessLayer.csproj" />
+    <ProjectReference Include="..\NotesKeeper.DataAccess\NotesKeeper.DataAccess.NoSQL.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace NotesKeeper.Common
 {
-    public class Day : IEquatable<Day>
+    public class Day : BaseModel, IEquatable<Day>
     {
         private DateTime _day;
 
-        public Day(DateTime dateTime)
+        public Day(Guid id, DateTime dateTime) : base(id)
         {
             this._day = dateTime;
             this.Events = new List<CustomEvent>();
@@ -33,17 +33,27 @@ namespace NotesKeeper.Common
 
         public static implicit operator Day(DateTime dateTime)
         {
-            return new Day(dateTime);
+            return new Day(Guid.NewGuid(), dateTime);
         }
 
         public static explicit operator DateTime(Day day)
         {
-            if (day == null)
-            {
-                throw new ArgumentNullException("");
-            }
+            Guard.IsNotNull(day);
 
             return new DateTime(day.Year, day.Month, day.DayNumber);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Day))
+            {
+                return false;
+            }
+
+            var second = (Day)obj;
+            return _day.Year == second.Year 
+                && _day.Month == second.Month 
+                && _day.Day == second.DayNumber;
         }
 
         public static bool operator ==(Day first, Day second)

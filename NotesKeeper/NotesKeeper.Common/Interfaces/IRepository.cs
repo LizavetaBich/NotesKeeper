@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace NotesKeeper.DataAccess.Interfaces
 {
-    public interface IRepository : IDisposable
+    public interface IRepository
     {
         Task<T> Create<T>(T item);
 
@@ -20,7 +20,7 @@ namespace NotesKeeper.DataAccess.Interfaces
 
         Task<IEnumerable<T>> Read<T>(IEnumerable<Guid> ids);
 
-        Task<IEnumerable<T>> Read<T>(Func<T, bool> filter);
+        Task<IEnumerable<T>> Read<T>(Func<T, bool> filter = null);
 
         Task<IEnumerable<T>> Update<T>(IEnumerable<T> items);
 

@@ -5,18 +5,18 @@ using System.Threading.Tasks;
 
 namespace NotesKeeper.DataAccess.Interfaces
 {
-    public interface IContext<T> : IDisposable
+    public interface IContext<T>
     {
         Task OpenConnection();
 
-        Task Flush();
-
         Task<IEnumerable<T>> Create(IEnumerable<T> items);
 
-        Task<IEnumerable<T>> Read(IEnumerable<Guid> ids, Func<bool> filter = null);
+        Task<IEnumerable<T>> Read(IEnumerable<Guid> ids);
+
+        Task<IEnumerable<T>> Read(Func<T, bool> filter = null);
 
         Task Update(IEnumerable<T> items);
 
-        Task Delete(IEnumerable<Guid> ids);
+        Task Delete(IEnumerable<Guid> ids = null);
     }
 }
