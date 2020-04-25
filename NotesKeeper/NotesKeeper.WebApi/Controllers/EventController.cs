@@ -24,15 +24,6 @@ namespace NotesKeeper.WebApi.Controllers
         [HttpGet("GetAll")]
         public async Task<IEnumerable<CustomEvent>> GetAll(CancellationToken token = default)
         {
-            await _eventService.CreateEvent(new CustomEvent() { 
-                Id = Guid.NewGuid(),
-                Frequency = Common.Enums.FrequencyEnum.Once,
-                Name = "name",
-                Description = "descr",
-                Status = Common.Enums.StatusEnum.Free,
-                EventStartDay = DateTime.Now,
-                Place = "place"
-            }).ConfigureAwait(false);
             return await _eventService.GetAllEvents(DateTime.Now).ConfigureAwait(false);
         }
     }
