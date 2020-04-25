@@ -7,7 +7,7 @@ namespace NotesKeeper.Common
     {
         private DateTime _day;
 
-        public Day(Guid id, DateTime dateTime) : base(id)
+        public Day(Guid id, DateTime dateTime)
         {
             this._day = dateTime;
             this.Events = new List<CustomEvent>();

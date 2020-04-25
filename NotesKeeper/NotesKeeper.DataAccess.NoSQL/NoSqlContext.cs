@@ -1,30 +1,29 @@
-﻿using MongoDB.Bson;
+﻿using Microsoft.Extensions.Configuration;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using NotesKeeper.Common;
 using NotesKeeper.Common.Interfaces;
-using NotesKeeper.Common.Models.Configuration;
 using NotesKeeper.DataAccess.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace NotesKeeper.DataAccess
 {
-    public class NoSqlContext<T> : IContext<T> where T : BaseModel
+    public class NoSqlContext<T> : IDocumentContext<T> where T : BaseModel
     {
-        private readonly ApplicationConfiguration _applicationConfiguration;
+        private readonly IConfiguration _configuration;
         private ISerializer<T> _jsonSerializer;
         private IMongoDatabase _mongoDatabase;
         private const string MongoDbServerPrefix = "mongodb://";
         private readonly string CollectionName = $"{typeof(T).Name}Collection";
 
-        public NoSqlContext(ISerializer<T> serializer, ApplicationConfiguration applicationConfiguration)
+        public NoSqlContext(ISerializer<T> serializer, IConfiguration configuration)
         {
             _jsonSerializer = serializer;
-            _applicationConfiguration = applicationConfiguration;
+            _configuration = configuration;
         }
 
         public async Task<IEnumerable<T>> Create(IEnumerable<T> items)
@@ -62,8 +61,8 @@ namespace NotesKeeper.DataAccess
         {
             return Task.Run(() =>
             {
-                var client = new MongoClient($"{MongoDbServerPrefix}{this._applicationConfiguration.DbServer}");
-                this._mongoDatabase = client.GetDatabase(this._applicationConfiguration.DbName);
+                var client = new MongoClient($"{_configuration.GetValue<string>("MongoServer")}");
+                this._mongoDatabase = client.GetDatabase(_configuration.GetValue<string>("MongoDocumentDbName"));
 
                 using (var cursor = this._mongoDatabase.ListCollectionNames())
                 {

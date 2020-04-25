@@ -9,7 +9,7 @@ namespace NotesKeeper.Common.Models
         public UserConfig(Guid id,
             Guid userId,
             int yearsForward,
-            int yearsBehind) : base(id)
+            int yearsBehind)
         {
             UserId = userId;
             YearsForward = yearsForward;

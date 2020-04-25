@@ -15,7 +15,7 @@ namespace NotesKeeper.BusinessLayer
 
         Task<IEnumerable<CustomEvent>> GetEventsByStatus(StatusEnum status);
 
-        Task<CustomEvent> CreateEvent(CustomEvent item, FrequencyEnum frequency);
+        Task<CustomEvent> CreateEvent(CustomEvent item);
 
         Task<CustomEvent> GetEventById(Guid id);
 

@@ -4,7 +4,7 @@ namespace NotesKeeper.Common
 {
     public static class Guard
     {
-        public static void IsNotNull<T>(T item) where T: class
+        public static void IsNotNull<T>(T item)
         {
             if (item == null)
             {

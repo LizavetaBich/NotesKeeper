@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver" Version="2.10.2" />
+    <PackageReference Include="SimpleInjector.Packaging" Version="4.9.2" />
   </ItemGroup>
 
   <ItemGroup>

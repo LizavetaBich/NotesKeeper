@@ -1,11 +1,12 @@
-﻿using System;
+﻿using NotesKeeper.Common;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace NotesKeeper.DataAccess.Interfaces
 {
-    public interface IContext<T>
+    public interface IContext<T> where T : BaseModel
     {
         Task OpenConnection();
 

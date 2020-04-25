@@ -6,14 +6,8 @@ namespace NotesKeeper.Common
 {
     public abstract class BaseModel
     {
-        public BaseModel(Guid id)
-        {
-            Id = id;
-            CreatedDate = DateTime.Now;
-        }
+        public Guid Id { get; set; }
 
-        public Guid Id { get; }
-
-        public DateTime CreatedDate { get; }
+        public DateTime CreatedDate { get; set; }
     }
 }

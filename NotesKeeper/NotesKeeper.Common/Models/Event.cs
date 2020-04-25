@@ -1,4 +1,5 @@
 ﻿using NotesKeeper.Common.Enums;
+using NotesKeeper.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,7 +8,7 @@ namespace NotesKeeper.Common
 {
     public class CustomEvent: BaseModel
     {
-        public CustomEvent(Guid id) : base(id)
+        public CustomEvent()
         {
             Days = new List<DateTime>();
         }

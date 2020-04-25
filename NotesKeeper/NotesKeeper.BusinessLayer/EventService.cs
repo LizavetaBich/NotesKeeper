@@ -1,113 +1,124 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.Extensions.Configuration;
 using NotesKeeper.Common;
 using NotesKeeper.Common.Enums;
-using NotesKeeper.DataAccess.Interfaces;
+using NotesKeeper.Common.EqualityComparers;
+using NotesKeeper.Common.Interfaces.DataAccess;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NotesKeeper.Common.EqualityComparers;
-using NotesKeeper.Common.Interfaces;
 
 namespace NotesKeeper.BusinessLayer
 {
     public class EventService : IEventService
     {
-        private readonly IConfigProvider _configProvider;
+        private readonly IConfiguration _configuration;
         private readonly ICalendarService _calendarService;
-        private readonly IRepository _repository;
+        private readonly IUserDbContext _dbContext;
         private readonly IEqualityComparer<DateTime> _dayEqualityComparer;
 
-        public EventService(ICalendarService calendarService, IRepository repository, IConfigProvider configProvider)
+        public EventService(ICalendarService calendarService, IUserDbContext dbContext, IConfiguration configuration)
         {
             Guard.IsNotNull(calendarService);
-            Guard.IsNotNull(repository);
-            Guard.IsNotNull(configProvider);
+            Guard.IsNotNull(dbContext);
+            Guard.IsNotNull(configuration);
 
             this._calendarService = calendarService;
-            this._repository = repository;
-            this._configProvider = configProvider;
+            this._dbContext = dbContext;
+            this._configuration = configuration;
             this._dayEqualityComparer = new DayEqualityComparer();
         }
 
-        public async Task<CustomEvent> CreateEvent(CustomEvent item, FrequencyEnum frequency)
+        public async Task<CustomEvent> CreateEvent(CustomEvent item)
         {
             Guard.IsNotNull(item);
 
-            await this._repository.Create<CustomEvent>(item).ConfigureAwait(false);
-
             await FillDays(item);
+            await this._dbContext.Events.AddAsync(item).ConfigureAwait(false);
+
+            await this._dbContext.SaveChangesAsync(true).ConfigureAwait(false);
 
             return item;
         }
 
         public Task DeleteEvent(Guid id)
         {
-            return this._repository.Delete<CustomEvent>(id);
-        }
-
-        public async Task<IEnumerable<CustomEvent>> GetAllEvents(DateTime day)
-        {
-            var items = await this._repository.ReadAll<CustomEvent>().ConfigureAwait(false);
-
-            foreach (var item in items)
+            return Task.Run(async () =>
             {
-                await FillDays(item);
-            }
-
-            return items;
+                var eventToDelete = this._dbContext.Events.Single(item => item.Id == id);
+                this._dbContext.Events.Remove(eventToDelete);
+                await this._dbContext.SaveChangesAsync(true).ConfigureAwait(false);
+            });
         }
 
-        public async Task<CustomEvent> GetEventById(Guid id)
+        public Task<IEnumerable<CustomEvent>> GetAllEvents(DateTime day)
         {
-            var item = await this._repository.Read<CustomEvent>(id).ConfigureAwait(false);
-
-            await FillDays(item);
-
-            return item;
-        }
-
-        public async Task<IEnumerable<CustomEvent>> GetEventsByDay(DateTime day)
-        {
-            var items = await this._repository.Read<CustomEvent>(x => x.Days.Any(d => this._dayEqualityComparer.Equals(d, day)))
-                .ConfigureAwait(false);
-
-            foreach (var item in items)
+            return Task.Run(async () =>
             {
-                await FillDays(item);
-            }
+                var items = this._dbContext.Events.AsEnumerable();
 
-            return items;
+                foreach (var item in items)
+                {
+                    await FillDays(item);
+                }
+
+                return items;
+            });
         }
 
-        public async Task<IEnumerable<CustomEvent>> GetEventsByStatus(StatusEnum status)
+        public Task<CustomEvent> GetEventById(Guid id)
         {
-            var items = await this._repository.Read<CustomEvent>(x => x.Status == status)
-                .ConfigureAwait(false);
-            
-            foreach (var item in items)
-            {
-                await FillDays(item);
-            }
+            return Task.Run(async () => {
+                var item = this._dbContext.Events.Single(x => x.Id == id);
 
-            return items;
+                await FillDays(item);
+
+                return item;
+            });
         }
 
-        public async Task<CustomEvent> UpdateEvent(CustomEvent item)
+        public Task<IEnumerable<CustomEvent>> GetEventsByDay(DateTime day)
+        {
+            return Task.Run(() => {
+                var items = this._dbContext.Events.Where(x => x.Days.Any(d => this._dayEqualityComparer.Equals(d, day)));
+
+                Parallel.ForEach(items, async item => await FillDays(item));
+
+                return items.AsEnumerable();
+            });
+        }
+
+        public Task<IEnumerable<CustomEvent>> GetEventsByStatus(StatusEnum status)
+        {
+            return Task.Run(() => {
+                var items = this._dbContext.Events.Where(x => x.Status == status);
+
+                Parallel.ForEach(items, async item => await FillDays(item));
+
+                return items.AsEnumerable();
+            });
+        }
+
+        public Task<CustomEvent> UpdateEvent(CustomEvent item)
         {
             Guard.IsNotNull(item);
 
-            await FillDays(item);
+            return Task.Run(async () => {
+                await FillDays(item);
 
-            return await this._repository.Update<CustomEvent>(item).ConfigureAwait(false);
+                this._dbContext.Events.Update(item);
+                await this._dbContext.SaveChangesAsync(true).ConfigureAwait(false);
+
+                return item;
+            });
         }
 
         private async Task FillDays(CustomEvent item)
         {
             item.Days.Clear();
 
-            var userConfig = await this._configProvider.GetUserConfig();
-            var lastDay = item.EventLastDay.HasValue ? item.EventLastDay.Value : DateTime.Now.AddYears(userConfig.YearsForward);
+            var userConfig = this._configuration.GetSection("UserConfig");
+            var lastDay = item.EventLastDay.HasValue ? item.EventLastDay.Value : DateTime.Now.AddYears(userConfig.GetValue<int>("YearsForward"));
 
             foreach (var day in await this._calendarService.GetDays(item.EventStartDay, lastDay, item.Frequency).ConfigureAwait(false))
             {

@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using NotesKeeper.DataAccess.Interfaces;
+using System.Threading.Tasks;
 
-namespace NotesKeeper.DataAccess.Interfaces.Factories
+namespace NotesKeeper.Common.Interfaces.Factories
 {
     public interface IContextFactory
     {
-        Task<IContext<T>> CreateContext<T>();
+        Task<IDocumentContext<T>> CreateContext<T>() where T : BaseModel;
     }
 }
