@@ -50,7 +50,6 @@ namespace NotesKeeper.BusinessLayer
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             user.Token = tokenHandler.WriteToken(token);
-            user.Password = null;
 
             return user;
         }

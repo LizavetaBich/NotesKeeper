@@ -28,4 +28,8 @@
     <ProjectReference Include="..\NotesKeeper.DataAccess.NoSQL\NotesKeeper.DataAccess.NoSQL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
 </Project>

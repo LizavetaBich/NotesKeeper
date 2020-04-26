@@ -33,7 +33,7 @@ namespace NotesKeeper.WebApi.Controllers
                 return BadRequest("User not found.");
             } else
             {
-                return Ok(user);
+                return Ok(_mapper.Map<ApplicationUserViewModel>(user));
             }
         }
 
@@ -49,7 +49,7 @@ namespace NotesKeeper.WebApi.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(AccountController.Login), nameof(AccountController));
+                return RedirectToAction(nameof(AccountController.Login), nameof(AccountController), _mapper.Map<LoginViewModel>(user));
             }
         }
     }
