@@ -34,6 +34,7 @@ namespace NotesKeeper.BusinessLayer
             Guard.IsNotNull(item);
 
             await FillDays(item);
+            item.CreatedDate = DateTime.Now.Date;
             await this._dbContext.Events.AddAsync(item).ConfigureAwait(false);
 
             await this._dbContext.SaveChangesAsync(true).ConfigureAwait(false);
