@@ -22,6 +22,20 @@ namespace NotesKeeper.WebApi.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Authenticate user.
+        /// </summary>
+        /// <remarks>
+        /// Sample request
+        /// POST
+        ///     {
+        ///         "Email" : "string",
+        ///         "Password" : "string"
+        ///     }
+        /// </remarks>
+        /// <param name="loginViewModel">Login model.</param>
+        /// <returns>User with auth Token.</returns>
+        /// <response code="200">User is authenticated successfully.</response>
         [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginViewModel loginViewModel)
@@ -37,6 +51,11 @@ namespace NotesKeeper.WebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Register new user.
+        /// </summary>
+        /// <param name="registrationViewModel">Registration model.</param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegistrationViewModel registrationViewModel)

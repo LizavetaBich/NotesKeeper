@@ -14,6 +14,9 @@ using NotesKeeper.DataAccess.NoSQL;
 using NotesKeeper.WebApi.Framework;
 using NotesKeeper.WebApi.Framework.Helper;
 using SimpleInjector;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace NotesKeeper.WebApi
 {
@@ -46,6 +49,10 @@ namespace NotesKeeper.WebApi
                     Title = "NotesKeeper.WebApi",
                     Version = "v1"
                 });
+
+                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                //c.IncludeXmlComments(xmlPath);
             });
 
             services.AddSimpleInjector(container, options =>
