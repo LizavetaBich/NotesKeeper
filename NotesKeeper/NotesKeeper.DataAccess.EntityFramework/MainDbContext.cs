@@ -2,6 +2,7 @@
 using NotesKeeper.Common;
 using NotesKeeper.Common.Interfaces.DataAccess;
 using NotesKeeper.Common.Models;
+using NotesKeeper.Common.Models.AccountModels;
 
 namespace NotesKeeper.DataAccess.EntityFramework
 {
@@ -9,10 +10,12 @@ namespace NotesKeeper.DataAccess.EntityFramework
     {
         public MainDbContext(DbContextOptions<MainDbContext> options) : base (options)
         {
-            //Database.EnsureCreated();
+            Database.Migrate();
         }
 
         public DbSet<ApplicationUser> Users { get; set; }
+
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,6 +27,10 @@ namespace NotesKeeper.DataAccess.EntityFramework
             modelBuilder.Entity<ApplicationUser>()
                 .HasIndex(c => c.Id)
                 .IsUnique();
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(c => c.RefreshTokens)
+                .WithOne(c => c.User);
         }
     }
 }

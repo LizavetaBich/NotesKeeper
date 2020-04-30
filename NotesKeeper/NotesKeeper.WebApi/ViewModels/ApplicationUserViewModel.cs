@@ -1,8 +1,5 @@
 ﻿using NotesKeeper.Common.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using NotesKeeper.Common.Models.AccountModels;
 
 namespace NotesKeeper.WebApi.ViewModels
 {
@@ -16,7 +13,9 @@ namespace NotesKeeper.WebApi.ViewModels
 
         public string LastName { get; set; }
 
-        public string Token { get; set; }
+        public AccessToken Token { get; set; }
+
+        public RefreshTokenViewModel RefreshToken { get; set; }
 
         public Role Role { get; set; }
     }

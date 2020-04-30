@@ -37,6 +37,17 @@ namespace NotesKeeper.WebApi.Extensions
             CreateMap<ApplicationUser, LoginViewModel>()
                 .ForMember(dest => dest.Email, options => options.MapFrom(src => src.Email))
                 .ForMember(dest => dest.Password, options => options.MapFrom(src => src.Password));
+
+            CreateMap<RefreshToken, RefreshTokenViewModel>()
+                .ForMember(dest => dest.Token, options => options.MapFrom(src => src.Token))
+                .ForMember(dest => dest.Expiration, options => options.MapFrom(src => src.ExpirationTime));
+
+            CreateMap<RefreshTokenViewModel, RefreshToken>()
+                .ForMember(dest => dest.Token, options => options.MapFrom(src => src.Token))
+                .ForMember(dest => dest.ExpirationTime, options => options.MapFrom(src => src.Expiration));
+
+            CreateMap<RefreshAccessTokenViewModel, RefreshAccessTokenModel>();
+            CreateMap<RefreshAccessTokenModel, RefreshAccessTokenViewModel>();
         }
     }
 }

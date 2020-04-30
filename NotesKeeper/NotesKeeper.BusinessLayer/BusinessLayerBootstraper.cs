@@ -10,6 +10,7 @@ namespace NotesKeeper.BusinessLayer
             container.Register<IEventService, EventService>();
             container.Register<ICalendarService, CalendarService>();
             container.Register<IAccountService, AccountService>();
+            container.Register<ITokenService, TokenService>();
         }
     }
 }

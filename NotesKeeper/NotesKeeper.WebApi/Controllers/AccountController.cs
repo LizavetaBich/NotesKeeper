@@ -40,16 +40,25 @@ namespace NotesKeeper.WebApi.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginViewModel loginViewModel)
         {
-            var user = await _accountService.LoginUser(_mapper.Map<LoginModel>(loginViewModel));
+            var pair = await _accountService.LoginUser(_mapper.Map<LoginModel>(loginViewModel));
 
-            if (user == null)
+            if (pair.User == null)
             {
                 return BadRequest("User not found.");
             } else
             {
-                return Ok(_mapper.Map<ApplicationUserViewModel>(user));
+                var viewModel = _mapper.Map<ApplicationUserViewModel>(pair.User);
+                viewModel.RefreshToken = _mapper.Map<RefreshTokenViewModel>(pair.RefreshToken);
+
+                return Ok(viewModel);
             }
         }
+
+        //[HttpPost("Logout")]
+        //public async Task<IActionResult> Logout()
+        //{
+        //    Request.Headers.
+        //}
 
         /// <summary>
         /// Register new user.
@@ -69,6 +78,20 @@ namespace NotesKeeper.WebApi.Controllers
             else
             {
                 return RedirectToAction(nameof(AccountController.Login), nameof(AccountController), _mapper.Map<LoginViewModel>(user));
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("RefreshAccessToken")]
+        public async Task<IActionResult> RefreshAccessToken([FromBody] RefreshAccessTokenViewModel model)
+        {
+            var newTokens = await _accountService.RefreshAccessToken(_mapper.Map<RefreshAccessTokenModel>(model));
+
+            if (newTokens == null)
+            {
+                return BadRequest("Tokens are invalid.");
+            } else {
+                return Ok(_mapper.Map<RefreshAccessTokenViewModel>(newTokens));
             }
         }
     }

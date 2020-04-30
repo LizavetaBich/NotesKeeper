@@ -1,8 +1,5 @@
 ﻿using NotesKeeper.Common.Models;
 using NotesKeeper.Common.Models.AccountModels;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace NotesKeeper.Common.Interfaces.BusinessLayer
@@ -11,6 +8,8 @@ namespace NotesKeeper.Common.Interfaces.BusinessLayer
     {
         Task<ApplicationUser> RegisterUser(RegisterModel registerModel);
 
-        Task<ApplicationUser> LoginUser(LoginModel loginModel);
+        Task<(ApplicationUser User, RefreshToken RefreshToken)> LoginUser(LoginModel loginModel);
+
+        Task<RefreshAccessTokenModel> RefreshAccessToken(RefreshAccessTokenModel model);
     }
 }

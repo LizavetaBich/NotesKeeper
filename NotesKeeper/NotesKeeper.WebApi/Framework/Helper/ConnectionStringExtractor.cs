@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using NotesKeeper.BusinessLayer;
 using NotesKeeper.Common.Interfaces.DataAccess;
 using System;
 using System.Collections.Generic;
@@ -9,37 +11,30 @@ namespace NotesKeeper.WebApi.Framework.Helper
 {
     public class ConnectionStringExtractor
     {
-        private readonly IDbContext _masterContext;
+        private readonly ITokenService _tokenService;
+        private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ConnectionStringExtractor(IDbContext master, IHttpContextAccessor contextAccessor)
+        public ConnectionStringExtractor(ITokenService tokenService, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            _masterContext = master;
-            _httpContextAccessor = contextAccessor;
+            _tokenService = tokenService;
+            _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public string GetUserConnectionString()
         {
-            var request = _httpContextAccessor.HttpContext?.Request;
+            var userDbConnectionStringPattern = _configuration.GetConnectionString("UserConnectionPattern");
 
-            if (request == null || !request.Query.ContainsKey("userId") || !request.Query.TryGetValue("userId", out var userId))
+            try
+            {
+                var userId = _tokenService.GetUserIdFromClaimsPrincipal(_httpContextAccessor.HttpContext?.User);
+
+                return string.Format(userDbConnectionStringPattern, userId);
+            } catch
             {
                 return null;
             }
-
-            if (!Guid.TryParse(userId.ToString(), out var id))
-            {
-                return null;
-            }
-
-            var user = _masterContext.Users.SingleOrDefault(x => x.Id == id);
-
-            if (user == null)
-            {
-                return null;
-            }
-
-            return user.DbConnectionString;
         }
     }
 }

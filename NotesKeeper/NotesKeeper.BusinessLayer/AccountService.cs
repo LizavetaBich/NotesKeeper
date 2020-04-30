@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using NotesKeeper.Common;
 using NotesKeeper.Common.ExtensionMethods;
 using NotesKeeper.Common.Interfaces.BusinessLayer;
 using NotesKeeper.Common.Interfaces.DataAccess;
@@ -10,6 +12,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,40 +23,57 @@ namespace NotesKeeper.BusinessLayer
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         private readonly IDbContext _dbContext;
+        private readonly ITokenService _tokenService;
 
-        public AccountService(IMapper mapper, IConfiguration configuration, IDbContext dbContext)
+        public AccountService(IMapper mapper, IConfiguration configuration, IDbContext dbContext, ITokenService tokenService)
         {
             _mapper = mapper;
             _configuration = configuration;
             _dbContext = dbContext;
+            _tokenService = tokenService;
         }
 
-        public async Task<ApplicationUser> LoginUser(LoginModel loginModel)
+        public async Task<(ApplicationUser User,RefreshToken RefreshToken)> LoginUser(LoginModel loginModel)
         {
-            var user = _dbContext.Users.SingleOrDefault(x => x.Email == loginModel.Email && x.Password == loginModel.Password);
+            var user = _dbContext.Users
+                .Include(x => x.RefreshTokens)
+                .SingleOrDefault(x => x.Email == loginModel.Email && x.Password == loginModel.Password);
 
             if (user ==null)
             {
-                return await Task.FromResult<ApplicationUser>(null).ConfigureAwait(false);
+                return await Task.FromResult<(ApplicationUser, RefreshToken)>((null, null)).ConfigureAwait(false);
             }
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration.GetAppSettingsSection().GetValue<string>("Secret"));
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, user.Id.ToString()),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Role, user.Role.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            user.Token = tokenHandler.WriteToken(token);
+            var refreshToken = _tokenService.GenerateRefreshToken();
+            user.RefreshTokens.Add(refreshToken);
+            await _dbContext.SaveChangesAsync(true);
 
-            return user;
+            user.Token = _tokenService.GenerateAccessToken(user);
+
+            return (User: user, RefreshToken: refreshToken);
+        }
+
+        public async Task<RefreshAccessTokenModel> RefreshAccessToken(RefreshAccessTokenModel model)
+        {
+            Guard.IsNotNull(model);
+
+            var isAccessTokenValid = _tokenService.ValidateAccessToken(model.AccessToken);
+            var userId = _tokenService.GetUserIdFromAccessToken(model.AccessToken);
+            var isRefreshTokenValid = _tokenService.ValidateRefreshToken(model.RefreshToken, userId);
+            var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == userId);
+
+            if (!(isAccessTokenValid && isRefreshTokenValid) || user == null)
+            {
+                return null;
+            }
+
+            model.AccessToken = _tokenService.GenerateAccessToken(user);
+            model.RefreshToken = _tokenService.GenerateRefreshToken();
+
+            user.RefreshTokens.Add(model.RefreshToken);
+            await _dbContext.SaveChangesAsync(true);
+
+            return model;
         }
 
         public async Task<ApplicationUser> RegisterUser(RegisterModel registerModel)

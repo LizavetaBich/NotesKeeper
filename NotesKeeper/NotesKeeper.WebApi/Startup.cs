@@ -15,8 +15,6 @@ using NotesKeeper.WebApi.Framework;
 using NotesKeeper.WebApi.Framework.Helper;
 using SimpleInjector;
 using System;
-using System.IO;
-using System.Reflection;
 
 namespace NotesKeeper.WebApi
 {
@@ -36,9 +34,10 @@ namespace NotesKeeper.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
             services.AddControllers();
-            services.AddAutoMapper(typeof(Startup));
+
+            services.AddCors();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddJWTAuth(Configuration);
 
@@ -78,6 +77,7 @@ namespace NotesKeeper.WebApi
 
             InitializeContainer();
 
+            services.AddTransient<ITokenService, TokenService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<ConnectionStringExtractor>();
 
@@ -85,6 +85,7 @@ namespace NotesKeeper.WebApi
             services.AddDbContext<IDbContext, MainDbContext>(options =>
             { 
                 options.UseSqlServer(connection);
+                options.UseLazyLoadingProxies();
             }, ServiceLifetime.Scoped);
 
             var defaultUserConnection = Configuration.GetConnectionString("DefaultUserConnection");
@@ -98,7 +99,7 @@ namespace NotesKeeper.WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IDbContext context)
         {
             if (env.IsDevelopment())
             {

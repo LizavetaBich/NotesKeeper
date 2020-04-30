@@ -1,4 +1,7 @@
-﻿using NotesKeeper.Common.Enums;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+using NotesKeeper.Common.Enums;
+using NotesKeeper.Common.Models.AccountModels;
+using System.Collections.Generic;
 
 namespace NotesKeeper.Common.Models
 {
@@ -12,10 +15,12 @@ namespace NotesKeeper.Common.Models
 
         public string LastName { get; set; }
 
-        public string Token { get; set; }
+        public AccessToken Token { get; set; }
 
         public string DbConnectionString { get; set; }
 
         public Role Role { get; set; }
+
+        public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     }
 }
