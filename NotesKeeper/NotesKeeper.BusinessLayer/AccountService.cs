@@ -53,6 +53,27 @@ namespace NotesKeeper.BusinessLayer
             return (User: user, RefreshToken: refreshToken);
         }
 
+        public async Task LogoutUser(RefreshAccessTokenModel model)
+        {
+            Guard.IsNotNull(model);
+
+            var userId = _tokenService.GetUserIdFromAccessToken(model.AccessToken);
+            var user = _dbContext
+                .Users.SingleOrDefault(x => x.Id == userId);
+
+            if (user != null)
+            {
+                var refreshToken = user.RefreshTokens.SingleOrDefault(x => x.Token == model.RefreshToken.Token);
+
+                if (refreshToken != null)
+                {
+                    //user.RefreshTokens.Remove(refreshToken);
+                    _dbContext.RefreshTokens.Remove(refreshToken);
+                    await _dbContext.SaveChangesAsync(true);
+                }
+            }
+        }
+
         public async Task<RefreshAccessTokenModel> RefreshAccessToken(RefreshAccessTokenModel model)
         {
             Guard.IsNotNull(model);

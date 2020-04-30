@@ -54,11 +54,13 @@ namespace NotesKeeper.WebApi.Controllers
             }
         }
 
-        //[HttpPost("Logout")]
-        //public async Task<IActionResult> Logout()
-        //{
-        //    Request.Headers.
-        //}
+        [HttpPost("Logout")]
+        public async Task<IActionResult> Logout([FromBody] RefreshAccessTokenViewModel model)
+        {
+            await _accountService.LogoutUser(_mapper.Map<RefreshAccessTokenModel>(model));
+
+            return Ok();
+        }
 
         /// <summary>
         /// Register new user.
@@ -77,7 +79,7 @@ namespace NotesKeeper.WebApi.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(AccountController.Login), nameof(AccountController), _mapper.Map<LoginViewModel>(user));
+                return Ok(_mapper.Map<LoginViewModel>(user));
             }
         }
 

@@ -101,7 +101,7 @@ namespace NotesKeeper.BusinessLayer
 
         public bool ValidateRefreshToken(RefreshToken token, Guid userId)
         {
-            return _masterContext
+            return token.ExpirationTime > DateTime.UtcNow && _masterContext
                 .Users
                 .SingleOrDefault(x => x.Id == userId)
                 .RefreshTokens

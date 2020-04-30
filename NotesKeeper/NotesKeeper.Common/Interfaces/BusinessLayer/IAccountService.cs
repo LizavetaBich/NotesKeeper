@@ -11,5 +11,7 @@ namespace NotesKeeper.Common.Interfaces.BusinessLayer
         Task<(ApplicationUser User, RefreshToken RefreshToken)> LoginUser(LoginModel loginModel);
 
         Task<RefreshAccessTokenModel> RefreshAccessToken(RefreshAccessTokenModel model);
+
+        Task LogoutUser(RefreshAccessTokenModel model);
     }
 }
