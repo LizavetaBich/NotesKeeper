@@ -13,7 +13,7 @@ namespace NotesKeeper.WebApi.ViewModels
 
         public string LastName { get; set; }
 
-        public AccessToken Token { get; set; }
+        public AccessToken AccessToken { get; set; }
 
         public RefreshTokenViewModel RefreshToken { get; set; }
 

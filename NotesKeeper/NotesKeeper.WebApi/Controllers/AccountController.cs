@@ -79,7 +79,7 @@ namespace NotesKeeper.WebApi.Controllers
             }
             else
             {
-                return Ok(_mapper.Map<LoginViewModel>(user));
+                return Ok(_mapper.Map<ApplicationUserViewModel>(user));
             }
         }
 

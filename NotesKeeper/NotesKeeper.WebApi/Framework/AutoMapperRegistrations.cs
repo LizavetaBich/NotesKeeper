@@ -23,7 +23,7 @@ namespace NotesKeeper.WebApi.Extensions
                 .ForMember(dest => dest.Email, options => options.MapFrom(src => src.Email))
                 .ForMember(dest => dest.FirstName, options => options.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, options => options.MapFrom(src => src.LastName))
-                .ForMember(dest => dest.Token, options => options.MapFrom(src => src.Token))
+                .ForMember(dest => dest.AccessToken, options => options.MapFrom(src => src.Token))
                 .ForMember(dest => dest.Role, options => options.MapFrom(src => src.Role));
 
             CreateMap<ApplicationUserViewModel, ApplicationUser>()
@@ -31,7 +31,7 @@ namespace NotesKeeper.WebApi.Extensions
                 .ForMember(dest => dest.Email, options => options.MapFrom(src => src.Email))
                 .ForMember(dest => dest.FirstName, options => options.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, options => options.MapFrom(src => src.LastName))
-                .ForMember(dest => dest.Token, options => options.MapFrom(src => src.Token))
+                .ForMember(dest => dest.Token, options => options.MapFrom(src => src.AccessToken))
                 .ForMember(dest => dest.Role, options => options.MapFrom(src => src.Role));
 
             CreateMap<ApplicationUser, LoginViewModel>()
