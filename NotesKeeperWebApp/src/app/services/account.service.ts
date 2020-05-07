@@ -16,12 +16,12 @@ export class AccountService extends BaseService {
     super();
    }
 
-  public RegisterUser(model: RegistrationModel): Observable<UserModel> {
+  public Register(model: RegistrationModel): Observable<UserModel> {
     return this.httpClient
       .post<UserModel>(this.ConstructUrl('Register'), model);
   }
 
-  public LoginUser(model: LoginModel): Observable<UserModel> {
+  public Login(model: LoginModel): Observable<UserModel> {
     return this.httpClient
       .post<UserModel>(this.ConstructUrl('Login'), model)
       .pipe(map(user => {
@@ -30,6 +30,14 @@ export class AccountService extends BaseService {
         }
 
         return user;
+      }));
+  }
+
+  public Logout(): any {
+    return this.httpClient
+      .post<UserModel>(this.ConstructUrl('Login'), {})
+      .pipe(map(user => {
+        this.RemoveUser();
       }));
   }
 
@@ -47,7 +55,7 @@ export class AccountService extends BaseService {
           user.accessToken = model.accessToken;
           user.refreshToken = model.refreshToken;
 
-          localStorage.removeItem('User');
+          this.RemoveUser();
           this.StoreUser(user);
 
           return user;
@@ -66,10 +74,14 @@ export class AccountService extends BaseService {
   }
 
   protected get ApiRoute(): string {
-    return 'api/Account';
+    return '/api/Account/';
   }
 
-  private StoreUser(user: UserModel) {
+  private RemoveUser(): void {
+    localStorage.removeItem('User');
+  }
+
+  private StoreUser(user: UserModel): void {
     const stringUser = JSON.stringify(user);
     localStorage.setItem('User', stringUser);
   }

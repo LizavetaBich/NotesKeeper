@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.accountService.LoginUser(this.loginForm.value)
+    this.accountService.Login(this.loginForm.value)
       .pipe(first())
       .subscribe(
         data => {

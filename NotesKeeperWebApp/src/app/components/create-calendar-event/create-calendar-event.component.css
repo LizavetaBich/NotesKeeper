@@ -1,0 +1,27 @@
+.horizontal-div {
+  display: -webkit-inline-box;
+}
+
+.center-align {
+  align-content: center;
+}
+
+.margin-10px {
+  margin-right: 10px;
+}
+
+.right-margin {
+  margin-right: 5%;
+}
+
+.left-margin {
+  margin-left: 5%;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.forty-percent-width {
+  width: 45%;
+}

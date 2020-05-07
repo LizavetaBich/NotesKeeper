@@ -41,7 +41,8 @@ export class RegistrationComponent implements OnInit {
     }
 
     this.loading = true;
-    this.accountService.RegisterUser(this.registerForm.value)
+    this.accountService.Register(this.registerForm.value)
+        .pipe(first())
         .subscribe(
             data => {
                 //this.alertService.success('Registration successful', true);
