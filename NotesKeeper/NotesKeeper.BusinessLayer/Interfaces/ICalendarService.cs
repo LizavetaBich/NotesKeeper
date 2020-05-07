@@ -1,4 +1,5 @@
-﻿using NotesKeeper.Common;
+﻿using NotesKeeper.BusinessLayer.Models;
+using NotesKeeper.Common;
 using NotesKeeper.Common.Enums;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,6 @@ namespace NotesKeeper.BusinessLayer
 {
     public interface ICalendarService
     {
-        Task<IEnumerable<DateTime>> GetDays(DateTime startDay, DateTime endDay, FrequencyEnum frequency);
+        Task<ICollection<Day>> CreateDays(CreateEventModel model);
     }
 }

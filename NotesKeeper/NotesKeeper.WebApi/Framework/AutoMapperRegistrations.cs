@@ -1,7 +1,13 @@
 ﻿using AutoMapper;
+using NotesKeeper.BusinessLayer.Models;
+using NotesKeeper.Common;
 using NotesKeeper.Common.Models;
 using NotesKeeper.Common.Models.AccountModels;
 using NotesKeeper.WebApi.ViewModels;
+using NotesKeeper.WebApi.ViewModels.Events;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NotesKeeper.WebApi.Extensions
 {
@@ -48,6 +54,13 @@ namespace NotesKeeper.WebApi.Extensions
 
             CreateMap<RefreshAccessTokenViewModel, RefreshAccessTokenModel>();
             CreateMap<RefreshAccessTokenModel, RefreshAccessTokenViewModel>();
+
+            CreateMap<CustomEvent, CalendarEventViewModel>()
+                .ForMember(dest => dest.Days, options => options.MapFrom(src => src.EventDays.Select(item => item.Day.Date)));
+
+            CreateMap<CreateEventViewModel, CreateEventModel>()
+                .ForMember(dest => dest.StartTime, options => options.MapFrom(src => TimeSpan.Parse(src.StartTime)))
+                .ForMember(dest => dest.EndTime, options => options.MapFrom(src => TimeSpan.Parse(src.EndTime)));
         }
     }
 }

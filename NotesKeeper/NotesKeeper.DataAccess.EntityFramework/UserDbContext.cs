@@ -13,12 +13,23 @@ namespace NotesKeeper.DataAccess.EntityFramework
 
         public DbSet<CustomEvent> Events { get; set; }
 
+        public DbSet<Day> Days { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CustomEvent>()
-                .Ignore(c => c.Days)
                 .HasIndex(c => c.Id)
                 .IsUnique();
+
+            modelBuilder.Entity<EventDay>()
+                .HasOne(sc => sc.Day)
+                .WithMany(s => s.DayEvents)
+                .HasForeignKey(sc => sc.DayId);
+
+            modelBuilder.Entity<EventDay>()
+                .HasOne(sc => sc.Event)
+                .WithMany(c => c.EventDays)
+                .HasForeignKey(sc => sc.EventId);
         }
     }
 }

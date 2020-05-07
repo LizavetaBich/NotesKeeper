@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NotesKeeper.DataAccess.EntityFramework;
 
 namespace NotesKeeper.DataAccess.EntityFramework.Migrations.UserDb
 {
     [DbContext(typeof(UserDbContext))]
-    partial class UserDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200505184226_UserContextExtendedWithDays")]
+    partial class UserContextExtendedWithDays
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,23 +27,23 @@ namespace NotesKeeper.DataAccess.EntityFramework.Migrations.UserDb
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("AllDay")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("BackgroundColor")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DayId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("EventLastTime")
+                    b.Property<DateTime?>("EventLastDay")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("EventStartTime")
+                    b.Property<DateTime>("EventStartDay")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Frequency")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -53,6 +55,8 @@ namespace NotesKeeper.DataAccess.EntityFramework.Migrations.UserDb
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DayId");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -77,40 +81,11 @@ namespace NotesKeeper.DataAccess.EntityFramework.Migrations.UserDb
                     b.ToTable("Days");
                 });
 
-            modelBuilder.Entity("NotesKeeper.Common.EventDay", b =>
+            modelBuilder.Entity("NotesKeeper.Common.CustomEvent", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DayId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DayId");
-
-                    b.HasIndex("EventId");
-
-                    b.ToTable("EventDay");
-                });
-
-            modelBuilder.Entity("NotesKeeper.Common.EventDay", b =>
-                {
-                    b.HasOne("NotesKeeper.Common.Day", "Day")
-                        .WithMany("DayEvents")
-                        .HasForeignKey("DayId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("NotesKeeper.Common.CustomEvent", "Event")
-                        .WithMany("EventDays")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("NotesKeeper.Common.Day", null)
+                        .WithMany("Events")
+                        .HasForeignKey("DayId");
                 });
 #pragma warning restore 612, 618
         }

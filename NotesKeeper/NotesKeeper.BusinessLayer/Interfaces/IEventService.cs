@@ -1,4 +1,5 @@
-﻿using NotesKeeper.Common;
+﻿using NotesKeeper.BusinessLayer.Models;
+using NotesKeeper.Common;
 using NotesKeeper.Common.Enums;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,11 @@ namespace NotesKeeper.BusinessLayer
     {
         Task<IEnumerable<CustomEvent>> GetEventsByDay(DateTime day);
 
-        Task<IEnumerable<CustomEvent>> GetAllEvents(DateTime day);
+        Task<IEnumerable<CustomEvent>> GetAllEvents(DateTime startDay, DateTime endDay);
 
         Task<IEnumerable<CustomEvent>> GetEventsByStatus(StatusEnum status);
 
-        Task<CustomEvent> CreateEvent(CustomEvent item);
+        Task<CustomEvent> CreateEvent(CreateEventModel item);
 
         Task<CustomEvent> GetEventById(Guid id);
 

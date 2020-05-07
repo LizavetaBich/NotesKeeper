@@ -3,77 +3,19 @@ using System.Collections.Generic;
 
 namespace NotesKeeper.Common
 {
-    public class Day : BaseModel, IEquatable<Day>
+    public class Day : BaseModel
     {
-        private DateTime _day;
+        public DateTime Date { get; set; }
 
-        public Day(Guid id, DateTime dateTime)
-        {
-            this._day = dateTime;
-            this.Events = new List<CustomEvent>();
-        }
-
-        public int DayNumber => _day.Day;
-
-        public int Month => _day.Month;
-
-        public int Year => _day.Year;
-
-        public DayOfWeek DayOfTheWeek => _day.DayOfWeek;
-
-        public IEnumerable<CustomEvent> Events { get; set; }
-
-        public bool Equals(Day other)
-        {
-            return other != null
-                && other.DayNumber == this.DayNumber
-                && other.Month == this.Month
-                && other.Year == this.Year;
-        }
+        public virtual ICollection<EventDay> DayEvents { get; set; } = new List<EventDay>();
 
         public static implicit operator Day(DateTime dateTime)
         {
-            return new Day(Guid.NewGuid(), dateTime);
-        }
-
-        public static explicit operator DateTime(Day day)
-        {
-            Guard.IsNotNull(day);
-
-            return new DateTime(day.Year, day.Month, day.DayNumber);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (!(obj is Day))
-            {
-                return false;
-            }
-
-            var second = (Day)obj;
-            return _day.Year == second.Year 
-                && _day.Month == second.Month 
-                && _day.Day == second.DayNumber;
-        }
-
-        public static bool operator ==(Day first, Day second)
-        {
-            if (first == null && second == null)
-            {
-                return true;
-            }
-
-            return first == null ? second.Equals(first) : first.Equals(second);
-        }
-
-        public static bool operator !=(Day first, Day second)
-        {
-            if (first == null && second == null)
-            {
-                return false;
-            }
-
-            return first == null ? !second.Equals(first) : !first.Equals(second);
+            return new Day { 
+                Id = Guid.NewGuid(), 
+                Date = dateTime,
+                CreatedDate = DateTime.Now
+            };
         }
     }
 }

@@ -1,5 +1,9 @@
-﻿using NotesKeeper.Common.Enums;
+﻿using Microsoft.Extensions.Configuration;
+using NotesKeeper.BusinessLayer.Models;
+using NotesKeeper.Common;
+using NotesKeeper.Common.Enums;
 using NotesKeeper.Common.EqualityComparers;
+using NotesKeeper.Common.Interfaces.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,46 +13,91 @@ namespace NotesKeeper.BusinessLayer
 {
     public class CalendarService : ICalendarService
     {
-        private readonly IEqualityComparer<DateTime> equalityComparer;
+        private readonly IUserDbContext _userDb;
+        private readonly IConfigurationSection _userConfiguration;
+        private readonly IEqualityComparer<Day> _equalityComparer;
 
-        public CalendarService()
+        public CalendarService(IUserDbContext userDb, IConfiguration configuration)
         {
-            equalityComparer = new DayEqualityComparer();
+            _userDb = userDb;
+            _userConfiguration = configuration.GetSection("UserConfig");
+            _equalityComparer = new DayEqualityComparer();
         }
 
-        public Task<IEnumerable<DateTime>> GetDays(DateTime startDay, DateTime endDay, FrequencyEnum frequency)
+        public async Task<ICollection<Day>> CreateDays(CreateEventModel model)
         {
-            return Task.Run(() => GetDaysRecursive(new List<DateTime>(), startDay, endDay, frequency).AsEnumerable());
-        }
-
-        private ICollection<DateTime> GetDaysRecursive(ICollection<DateTime> days, DateTime start, DateTime end, FrequencyEnum frequency)
-        {
-            if (start > end)
+            if (model == null)
             {
-                return days;
+                return null;
             }
 
-            days.Add(start);
+            var startDay = this._userDb.Days.FirstOrDefault(item => item.Date == model.StartDate)
+                ?? model.StartDate;
+            var endDay = DateTime.Now.AddYears(_userConfiguration.GetValue<int>("YearsForward"));
+            var days = new List<Day>();
 
-            switch(frequency)
+            switch ((FrequencyEnum)model.Frequency)
             {
                 case FrequencyEnum.EveryDay:
-                    start = start.AddDays(1);
+                    ConstructDays(days, startDay, endDay, date => date.AddDays(1));
                     break;
                 case FrequencyEnum.EveryWeek:
-                    start = start.AddDays(7);
+                    ConstructDays(days, startDay, endDay, date => date.AddDays(7));
                     break;
                 case FrequencyEnum.EveryMonth:
-                    start = start.AddMonths(1);
+                    ConstructDays(days, startDay, endDay, date => date.AddMonths(1));
                     break;
                 case FrequencyEnum.EveryYear:
-                    start = start.AddYears(1);
+                    ConstructDays(days, startDay, endDay, date => date.AddYears(1));
                     break;
                 case FrequencyEnum.Once:
+                    days.Add(startDay);
+                    break;
+                case FrequencyEnum.Custom:
+                    CustomDays(days, endDay, model);
+                    break;
+                default:
                     return days;
             }
 
-            return GetDaysRecursive(days, start, end, frequency);
+            var daysToStore = days.Except(this._userDb.Days, this._equalityComparer).ToList();
+            this._userDb.Days.AddRange(daysToStore);
+            await this._userDb.SaveChangesAsync(true);
+            return days;
+        }
+
+        private void CustomDays(ICollection<Day> days, Day endDay, CreateEventModel model)
+        {
+            var start = model.StartDate;
+            var end = model.EndDate ?? endDay;
+            Func<DateTime, DateTime> incrementFunc = date =>
+            {
+                if (model.Days != null && model.Days.Any())
+                {
+                    var next = model.Days.Where(item => item > (int)date.DayOfWeek).Min();
+                    var delta = next - (int)date.DayOfWeek;
+                    return date.AddDays(delta);
+                } else
+                {
+                    return date.AddDays(1);
+                }
+            };
+
+            ConstructDays(days, start, end, incrementFunc);
+        }
+
+        private void ConstructDays(ICollection<Day> days, Day current, Day endDay, Func<DateTime, DateTime> incrementFunc)
+        {
+            if (current == null || current.Date.Date > endDay.Date.Date)
+            {
+                return;
+            }
+
+            var currentDay = this._userDb.Days.FirstOrDefault(item => item.Date.Date == current.Date.Date)
+                    ?? current;
+
+            days.Add(currentDay);
+            ConstructDays(days, incrementFunc(current.Date), endDay, incrementFunc);
         }
     }
 }

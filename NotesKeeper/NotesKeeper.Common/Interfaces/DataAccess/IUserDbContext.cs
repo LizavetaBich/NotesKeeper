@@ -8,6 +8,8 @@ namespace NotesKeeper.Common.Interfaces.DataAccess
     {
         DbSet<CustomEvent> Events { get; set; }
 
+        DbSet<Day> Days { get; set; }
+
         Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
     }
 }

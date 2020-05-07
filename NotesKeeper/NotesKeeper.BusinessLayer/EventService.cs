@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using NotesKeeper.BusinessLayer.Models;
 using NotesKeeper.Common;
 using NotesKeeper.Common.Enums;
 using NotesKeeper.Common.EqualityComparers;
@@ -15,7 +17,7 @@ namespace NotesKeeper.BusinessLayer
         private readonly IConfiguration _configuration;
         private readonly ICalendarService _calendarService;
         private readonly IUserDbContext _dbContext;
-        private readonly IEqualityComparer<DateTime> _dayEqualityComparer;
+        private readonly IEqualityComparer<Day> _dayEqualityComparer;
 
         public EventService(ICalendarService calendarService, IUserDbContext dbContext, IConfiguration configuration)
         {
@@ -29,17 +31,25 @@ namespace NotesKeeper.BusinessLayer
             this._dayEqualityComparer = new DayEqualityComparer();
         }
 
-        public async Task<CustomEvent> CreateEvent(CustomEvent item)
+        public async Task<CustomEvent> CreateEvent(CreateEventModel item)
         {
             Guard.IsNotNull(item);
 
-            await FillDays(item);
-            item.CreatedDate = DateTime.Now.Date;
-            await this._dbContext.Events.AddAsync(item).ConfigureAwait(false);
+            var days = await this._calendarService.CreateDays(item);
+            var calendarEvent = this.ConstructEvent(item);
 
+            await this._dbContext.Events.AddAsync(calendarEvent).ConfigureAwait(false);
             await this._dbContext.SaveChangesAsync(true).ConfigureAwait(false);
 
-            return item;
+            var daysEvents = days.Select(day => new EventDay { 
+                DayId = day.Id,
+                EventId = calendarEvent.Id
+            });
+
+            calendarEvent.EventDays = daysEvents.ToList();
+            await this._dbContext.SaveChangesAsync(true).ConfigureAwait(false);
+
+            return calendarEvent;
         }
 
         public Task DeleteEvent(Guid id)
@@ -52,16 +62,15 @@ namespace NotesKeeper.BusinessLayer
             });
         }
 
-        public Task<IEnumerable<CustomEvent>> GetAllEvents(DateTime day)
+        public Task<IEnumerable<CustomEvent>> GetAllEvents(DateTime startDay, DateTime endDay)
         {
-            return Task.Run(async () =>
+            return Task.Run(() =>
             {
-                var items = this._dbContext.Events.AsEnumerable();
-
-                foreach (var item in items)
-                {
-                    await FillDays(item);
-                }
+                var items = this._dbContext.Events
+                    .Include(item => item.EventDays)
+                    .ThenInclude(item => item.Day)
+                    .Where(item => item.EventDays.Any(day => day.Day.Date >= startDay && day.Day.Date <= endDay))
+                    .AsEnumerable();
 
                 return items;
             });
@@ -69,10 +78,8 @@ namespace NotesKeeper.BusinessLayer
 
         public Task<CustomEvent> GetEventById(Guid id)
         {
-            return Task.Run(async () => {
+            return Task.Run(() => {
                 var item = this._dbContext.Events.Single(x => x.Id == id);
-
-                await FillDays(item);
 
                 return item;
             });
@@ -81,9 +88,7 @@ namespace NotesKeeper.BusinessLayer
         public Task<IEnumerable<CustomEvent>> GetEventsByDay(DateTime day)
         {
             return Task.Run(() => {
-                var items = this._dbContext.Events.Where(x => x.Days.Any(d => this._dayEqualityComparer.Equals(d, day)));
-
-                Parallel.ForEach(items, async item => await FillDays(item));
+                var items = this._dbContext.Events.Where(x => x.EventDays.Any(d => this._dayEqualityComparer.Equals(d.Day, day)));
 
                 return items.AsEnumerable();
             });
@@ -94,8 +99,6 @@ namespace NotesKeeper.BusinessLayer
             return Task.Run(() => {
                 var items = this._dbContext.Events.Where(x => x.Status == status);
 
-                Parallel.ForEach(items, async item => await FillDays(item));
-
                 return items.AsEnumerable();
             });
         }
@@ -105,8 +108,6 @@ namespace NotesKeeper.BusinessLayer
             Guard.IsNotNull(item);
 
             return Task.Run(async () => {
-                await FillDays(item);
-
                 this._dbContext.Events.Update(item);
                 await this._dbContext.SaveChangesAsync(true).ConfigureAwait(false);
 
@@ -114,17 +115,20 @@ namespace NotesKeeper.BusinessLayer
             });
         }
 
-        private async Task FillDays(CustomEvent item)
+        private CustomEvent ConstructEvent(CreateEventModel model)
         {
-            item.Days.Clear();
-
-            var userConfig = this._configuration.GetSection("UserConfig");
-            var lastDay = item.EventLastDay.HasValue ? item.EventLastDay.Value : DateTime.Now.AddYears(userConfig.GetValue<int>("YearsForward"));
-
-            foreach (var day in await this._calendarService.GetDays(item.EventStartDay, lastDay, item.Frequency).ConfigureAwait(false))
+            return new CustomEvent()
             {
-                item.Days.Add(day);
-            }
+                Id = Guid.NewGuid(),
+                CreatedDate = DateTime.Now,
+                Name = model.Title,
+                Description = model.Description,
+                Place = model.Place,
+                EventStartTime = new DateTime(1970, 1, 1, model.StartTime.Hours, model.StartTime.Minutes, 0, 0),
+                EventLastTime = new DateTime(1970, 1, 1, model.EndTime.Hours, model.EndTime.Minutes, 0, 0),
+                AllDay = model.IsAllDay,
+                BackgroundColor = model.BackgroundColor
+            };
         }
     }
 }
