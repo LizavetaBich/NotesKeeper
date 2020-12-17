@@ -131,5 +131,8 @@
       }
     }
   },
-  "defaultProject": "NotesKeeper-WebApp"
+  "defaultProject": "NotesKeeper-WebApp",
+  "cli": {
+    "analytics": false
+  }
 }

@@ -1,18 +1,18 @@
-import { 
-  Component, 
-  OnInit, 
-  ChangeDetectionStrategy, 
-  ViewChild, 
-  TemplateRef 
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  ViewChild,
+  TemplateRef
 } from '@angular/core';
-import { 
-  CalendarView, 
-  CalendarEvent, 
-  CalendarEventAction, 
-  CalendarEventTimesChangedEvent 
+import {
+  CalendarView,
+  CalendarEvent,
+  CalendarEventAction,
+  CalendarEventTimesChangedEvent
 } from 'angular-calendar';
-import { 
-  Subject 
+import {
+  Subject
 } from 'rxjs';
 import {
   startOfDay,
@@ -24,6 +24,7 @@ import {
   isSameMonth,
   addHours,
 } from 'date-fns';
+import { MatDialog } from '@angular/material/dialog';
 
 const colors: any = {
   red: {
@@ -91,7 +92,7 @@ export class CalendarGridComponent implements OnInit {
 
   activeDayIsOpen: boolean = true;
 
-  constructor(private modal: NgbModal) {}
+  constructor(private modal: MatDialog) {}
 
   ngOnInit(): void {
   }
@@ -130,7 +131,8 @@ export class CalendarGridComponent implements OnInit {
 
   handleEvent(action: string, event: CalendarEvent): void {
     this.modalData = { event, action };
-    this.modal.open(this.modalContent, { size: 'lg' });
+    // this.modal.open(this.modalContent, { size: 'lg' });
+    this.modal.open(this.modalContent);
   }
 
   addEvent(): void {
