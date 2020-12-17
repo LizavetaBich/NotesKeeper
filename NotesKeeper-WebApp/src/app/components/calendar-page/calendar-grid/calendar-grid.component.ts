@@ -56,28 +56,7 @@ export class CalendarGridComponent implements OnInit {
 
   viewDate: Date = new Date();
 
-  modalData: {
-    action: string;
-    event: CalendarEvent;
-  } | undefined;
-
-  actions: CalendarEventAction[] = [
-    {
-      label: '<i class="fas fa-fw fa-pencil-alt"></i>',
-      a11yLabel: 'Edit',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.handleEvent('Edited', event);
-      },
-    },
-    {
-      label: '<i class="fas fa-fw fa-trash-alt"></i>',
-      a11yLabel: 'Delete',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.events = this.events.filter((iEvent) => iEvent !== event);
-        this.handleEvent('Deleted', event);
-      },
-    },
-  ];
+  event!: CalendarEvent;
 
   refresh: Subject<any> = new Subject();
 
@@ -85,8 +64,7 @@ export class CalendarGridComponent implements OnInit {
     {
       start: startOfDay(new Date()),
       title: 'An event with no end date',
-      color: colors.yellow,
-      actions: this.actions,
+      color: colors.yellow
     }
   ];
 
@@ -130,9 +108,8 @@ export class CalendarGridComponent implements OnInit {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    this.modalData = { event, action };
-    // this.modal.open(this.modalContent, { size: 'lg' });
-    this.modal.open(this.modalContent);
+    this.event = event;
+    const dialogRef = this.modal.open(this.modalContent);
   }
 
   addEvent(): void {

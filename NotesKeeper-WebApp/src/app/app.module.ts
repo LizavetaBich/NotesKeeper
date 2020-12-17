@@ -9,20 +9,31 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CalendarGridComponent } from './components/calendar-page/calendar-grid/calendar-grid.component';
 import { MaterialModalComponent } from './components/shared/material-modal/material-modal.component';
 import { FormsModule } from '@angular/forms';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import { VarDirective } from './directives/var-directive.directive';
 
 @NgModule({
   declarations: [
     AppComponent,
     CalendarGridComponent,
-    MaterialModalComponent
+    MaterialModalComponent,
+    VarDirective
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatToolbarModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    FormsModule
   ],
-  providers: [],
+  providers: [ MatDialog ],
   bootstrap: [AppComponent],
   exports: [
     FormsModule

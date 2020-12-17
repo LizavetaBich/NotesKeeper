@@ -1,8 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
-
-interface DialogData {
-  email: string;
-}
+import { Component, OnInit, Input, TemplateRef } from '@angular/core';
 
 @Component({
   selector: 'app-material-modal',
@@ -10,15 +6,10 @@ interface DialogData {
   styleUrls: ['./material-modal.component.sass']
 })
 export class MaterialModalComponent implements OnInit {
+  template!: TemplateRef<any>;
 
-  constructor(/* public dialogRef: MatDialogRef<MaterialModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData */) { }
-
-  onNoClick(): void {
-    // this.dialogRef.close();
-  }
+  constructor() {}
 
   ngOnInit(): void {
   }
-
 }
