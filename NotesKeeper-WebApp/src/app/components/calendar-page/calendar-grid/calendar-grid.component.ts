@@ -25,6 +25,7 @@ import {
   addHours,
 } from 'date-fns';
 import { MatDialog } from '@angular/material/dialog';
+import { EventViewComponent } from '../event-view/event-view.component';
 
 const colors: any = {
   red: {
@@ -39,6 +40,10 @@ const colors: any = {
     primary: '#e3bc08',
     secondary: '#FDF1BA',
   },
+  white: {
+    primary: '#FFFFFF',
+    secondary: '#FFFFFF'
+  }
 };
 
 @Component({
@@ -48,7 +53,6 @@ const colors: any = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalendarGridComponent implements OnInit {
-  @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
 
@@ -64,7 +68,8 @@ export class CalendarGridComponent implements OnInit {
     {
       start: startOfDay(new Date()),
       title: 'An event with no end date',
-      color: colors.yellow
+      color: colors.yellow,
+      meta: ''
     }
   ];
 
@@ -109,24 +114,41 @@ export class CalendarGridComponent implements OnInit {
 
   handleEvent(action: string, event: CalendarEvent): void {
     this.event = event;
-    const dialogRef = this.modal.open(this.modalContent);
+    const dialogRef = this.modal.open(EventViewComponent, {
+      height: '75%',
+      width: '50%',
+      data: event
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.addEvent(result);
+      }
+    });
   }
 
-  addEvent(): void {
+  addEvent(event: CalendarEvent): void {
     this.events = [
       ...this.events,
-      {
-        title: 'New event',
-        start: startOfDay(new Date()),
-        end: endOfDay(new Date()),
-        color: colors.red,
-        draggable: true,
-        resizable: {
-          beforeStart: true,
-          afterEnd: true,
-        },
-      },
+      event
     ];
+  }
+
+  emptyEvent(day: Date | undefined): CalendarEvent {
+    return {
+      title: '',
+      start: startOfDay(day || new Date()),
+      end: endOfDay(day || new Date()),
+      color: colors.white,
+      draggable: true,
+      resizable: {
+        beforeStart: true,
+        afterEnd: true,
+      },
+      meta: {
+        description: ''
+      }
+    }
   }
 
   deleteEvent(eventToDelete: CalendarEvent) {

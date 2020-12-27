@@ -101,28 +101,9 @@
       </span>
     </div>
     <div class="monthCellOptions">
-      <button mat-icon-button color="primary" aria-label="Add new event" *ngIf="showEditButton">
+      <button mat-icon-button color="primary" aria-label="Add new event" *ngIf="showEditButton" (click)="handleEvent('addNew', emptyEvent(day.date))">
         <mat-icon>add_circle</mat-icon>
       </button>
-    </div>
-  </div>
-</ng-template>
-
-<ng-template #modalContent let-close="close">
-  <div class="eventContent">
-    <div class="modal-header">
-      <h5 class="modal-title">{{ event?.title }}</h5>
-    </div>
-    <div class="modal-body">
-      <div>
-        Event:
-        <pre>{{ event | json }}</pre>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <mat-dialog-actions>
-        <button mat-button mat-dialog-close>Cancel</button>
-      </mat-dialog-actions>
     </div>
   </div>
 </ng-template>

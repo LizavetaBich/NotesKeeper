@@ -1,0 +1,61 @@
+<div class="eventContent">
+  <div class="modal-header">
+    <mat-form-field class="width-100-perc">
+      <mat-label>Event title</mat-label>
+      <input type="text"
+        matInput placeholder="Ex. My awesome event!"
+        [value]="event.title || ''"
+        (input)="event.title = $event.target.value">
+    </mat-form-field>
+  </div>
+
+  <div class="modal-body">
+    <mat-form-field class="width-100-perc">
+      <mat-label>Description</mat-label>
+      <textarea matInput
+        placeholder="Ex. My awesome description for event"
+        [value]="event.meta?.description || ''"
+        (input)="event.meta.description = $event.target.value"></textarea>
+    </mat-form-field>
+
+    <div class="date-range">
+      <mat-form-field appearance="standard">
+        <mat-label>Choose start date</mat-label>
+        <input matInput
+          [matDatepickerFilter]="startDayFilter"
+          [matDatepicker]="startDatePicker"
+          [value]="event.start"
+          (dateChange)="event.start = $event.target.value">
+        <mat-datepicker-toggle matSuffix class="display-contents" [for]="startDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #startDatePicker></mat-datepicker>
+      </mat-form-field>
+
+      <timepicker [(ngModel)]="eventStartTime" [mousewheel]="true" [showSpinners]="false"></timepicker>
+
+      <mat-checkbox #allDayEvent color="primary" (change)="allDayChecked($event.checked)" class="all-day-event">Is full day event</mat-checkbox>
+    </div>
+
+    <div class="date-range">
+      <mat-form-field appearance="standard">
+        <mat-label>Choose end date</mat-label>
+        <input matInput
+          [matDatepickerFilter]="endDayFilter"
+          [matDatepicker]="endDatePicker"
+          [disabled]="isAllDayEvent"
+          [value]="event.end || event.start"
+          (dateChange)="event.end = dateHelper.toDate($event.target.value)">
+        <mat-datepicker-toggle matSuffix class="display-contents" [for]="endDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #endDatePicker></mat-datepicker>
+      </mat-form-field>
+
+      <timepicker [(ngModel)]="eventEndTime" [mousewheel]="true" [showSpinners]="false"></timepicker>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <mat-dialog-actions>
+      <button mat-button (click)="closeModal()">Cancel</button>
+      <button mat-button (click)="saveAndClose()">Save</button>
+    </mat-dialog-actions>
+  </div>
+</div>
